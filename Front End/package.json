@@ -1,0 +1,11 @@
+{
+  "name": "asrah-front-end",
+  "version": "1.0.0",
+  "description": "Project Asrah Website Frontend",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Indra Wijaya",
+  "license": "ISC"
+}
