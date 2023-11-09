@@ -1,0 +1,11 @@
+{
+  "name": "asrah-back-end",
+  "version": "1.0.0",
+  "description": "Project Asrah Website Backend",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Indra Wijaya",
+  "license": "ISC"
+}
