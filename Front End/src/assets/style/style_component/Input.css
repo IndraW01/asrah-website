@@ -1,0 +1,207 @@
+.tittle_input_global {
+  color: var(--base-black, #282828);
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 600;
+  padding-bottom: 8px;
+}
+
+.global_inputText {
+  border: 1px solid var(--neutral-04, #d3d3d4);
+  background: #fff;
+  padding: 16px 24px;
+  width: 100%;
+  display: flex;
+  margin-bottom: 16px;
+}
+.global_inputText input {
+  border: 1px solid #fff;
+  background: #fff;
+  width: 100%;
+  outline: none;
+  font-size: 16px;
+}
+.global_inputText textarea {
+  border: 1px solid #fff;
+  background: #fff;
+  width: 100%;
+  outline: none;
+  font-size: 16px;
+  height: 160px;
+}
+.global_inputText .type_eyeText {
+  opacity: 0.5;
+}
+.global_inputText .type_eyePassword {
+  opacity: 1;
+}
+.global_errorText {
+  color: var(--danger-05, #ff5726);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 8px;
+}
+
+.global_button_long {
+  border-radius: 12px;
+  background: var(--primary-05, #2aac6a);
+  padding: 16px;
+  width: 100%;
+  border: 1px solid var(--primary-05, #2aac6a);
+  color: var(--base-white, #fff);
+  font-size: 16px;
+  font-weight: 600;
+}
+.global_button_long.notVerified {
+  cursor: none;
+  background: var(--primary-01, #ccebdb);
+}
+
+.global_button_long:hover {
+  background: var(--primary-07, #00813f);
+}
+.global_button_long:active {
+  background: var(--primary-08, #006733);
+}
+
+.wrap_radio_global {
+  gap: 24px;
+  margin-bottom: 16px;
+}
+.wrap_radio_global input[type="radio"] {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid green;
+  outline: none;
+  transition: border-color 0.3s ease-in-out;
+  margin-right: 8px;
+  accent-color: #009b4c;
+}
+
+.global_button_long {
+  border-radius: 12px;
+  background: var(--primary-05, #2aac6a);
+  padding: 16px;
+  width: 100%;
+  border: 1px solid var(--primary-05, #2aac6a);
+  color: var(--base-white, #fff);
+  font-size: 16px;
+  font-weight: 600;
+}
+.global_button_long.notVerified {
+  cursor: none;
+  background: var(--primary-01, #ccebdb);
+}
+
+.global_button_long:hover {
+  background: var(--primary-07, #00813f);
+}
+.global_button_long:active {
+  background: var(--primary-08, #006733);
+}
+
+.wrap_radio_global {
+  gap: 24px;
+  margin-bottom: 16px;
+}
+.wrap_radio_global input[type="radio"] {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid green;
+  outline: none;
+  transition: border-color 0.3s ease-in-out;
+  margin-right: 8px;
+  accent-color: #009b4c;
+}
+
+.global_button_short.absen {
+  border-radius: 8px;
+  border: 1px solid var(--success-05, #52bf28);
+  background: var(--success-01, #e9fbd3);
+  padding: 8px;
+  color: var(--success-05, #52bf28);
+  font-size: 12px;
+  font-weight: 600;
+  width: 137px;
+  margin-right: 8px;
+}
+
+.global_button_short.absen:active {
+  background: var(--success-05, #52bf28);
+  color: white;
+}
+
+.global_button_short.tugas {
+  border-radius: 8px;
+  border: 1px solid var(--primary-05, #2aac6a);
+  background: var(--primary-01, #ccebdb);
+  padding: 8px;
+  color: var(--primary-05, #2aac6a);
+  font-size: 12px;
+  width: 137px;
+  font-weight: 600;
+  margin-right: 8px;
+}
+
+.global_button_short.tugas:active {
+  background: var(--primary-05, #2aac6a);
+  color: white;
+}
+.global_button_short.send_to_dosen {
+  border-radius: 12px;
+  background: var(--primary-05, #2aac6a);
+  padding: 16px;
+  border: 1px solid var(--primary-05, #2aac6a);
+  color: var(--base-white, #fff);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.global_button_short.send_to_dosen:active {
+  background: var(--primary-05, #2aac6a);
+  color: white;
+}
+.global_button_short.add_file {
+  border-radius: 12px;
+  background: white;
+  padding: 16px;
+  border: 1px solid var(--primary-05, #2aac6a);
+  color: var(--primary-05, #2aac6a);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.global_button_short.add_file:active {
+  background: var(--primary-05, #2aac6a);
+  color: white;
+}
+
+.global_info.jam {
+  border-radius: 8px;
+  border: 1px solid var(--neutral-02, #b6b6b7);
+  padding: 8px;
+  color: var(--warning-06, #db9e28);
+  font-size: 12px;
+  width: 137px;
+  font-weight: 600;
+  background: white;
+}
+
+.btn_gabung_kelas_up {
+  margin-top: -20px;
+}
+
+.tittle_input {
+  color: var(--base-black, #1b1b1b);
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 150%; /* 24px */
+  padding-bottom: 24px;
+}
+
+.container_inputtt {
+  padding-bottom: 56px;
+}
