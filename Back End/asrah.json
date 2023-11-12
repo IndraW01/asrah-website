@@ -1,0 +1,182 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Asrah Mode",
+    "version": "1",
+    "description": "OpenAPI for  Asrah Mode RESTful API",
+    "termsOfService": "http://localhost:5000",
+    "contact": {
+      "name": "Indra Wijaya",
+      "email": "indraakmal08@gmail.com",
+      "url": "https://github.com/IndraW01/"
+    },
+    "license": {
+      "name": "APACHE 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://{environment}.localhost:3000",
+      "description": "Todolist RESTful API Server",
+      "variables": {
+        "environment": {
+          "description": "Server Environment",
+          "default": "dev",
+          "enum": ["dev", "qa", "prod"]
+        }
+      }
+    }
+  ],
+  "externalDocs": {
+    "description": "Youtube Programmer Zaman Now",
+    "url": "https://www.youtube.com/c/ProgrammerZamanNow"
+  },
+  "paths": {
+    "/api/users/register": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "User register",
+        "description": "New user register",
+        "requestBody": {
+          "description": "Request body to register the user",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "email", "password", "confirm_password"],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "maxLength": 200
+                  },
+                  "email": {
+                    "type": "string",
+                    "maxLength": 200,
+                    "format": "email"
+                  },
+                  "password": {
+                    "type": "string",
+                    "maxLength": 200
+                  },
+                  "confirm_password": {
+                    "type": "string",
+                    "maxLength": 200
+                  }
+                }
+              },
+              "examples": {
+                "jason": {
+                  "summary": "An example of a register jason",
+                  "value": {
+                    "name": "Jason",
+                    "email": "jason@gmail.com",
+                    "password": "password",
+                    "confirm_password": "confirm_password"
+                  }
+                },
+                "jamal": {
+                  "summary": "An example of a register jamal",
+                  "value": {
+                    "name": "jamal",
+                    "email": "jamal@gmail.com",
+                    "password": "password",
+                    "confirm_password": "confirm_password"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success register new user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "number"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "maxLength": 200
+                        },
+                        "email": {
+                          "type": "string",
+                          "maxLength": 200,
+                          "format": "email"
+                        }
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "jason": {
+                    "summary": "An example of success register jason",
+                    "value": {
+                      "code": 200,
+                      "data": {
+                        "name": "Jason",
+                        "email": "jason@gmail.com"
+                      }
+                    }
+                  },
+                  "jamal": {
+                    "summary": "An example of success register jamal",
+                    "value": {
+                      "code": 200,
+                      "data": {
+                        "name": "Jason",
+                        "email": "jason@gmail.com"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request user invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer"
+                    },
+                    "errors": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "name and email": {
+                    "description": "Invalid request, name and email empty",
+                    "value": {
+                      "code": 400,
+                      "errors": "Name is required. Email is required"
+                    }
+                  },
+                  "email": {
+                    "description": "Email already registerd",
+                    "value": {
+                      "code": 400,
+                      "errors": "Email already registered"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
