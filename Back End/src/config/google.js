@@ -1,7 +1,7 @@
 import { google } from "googleapis";
 
 // Konfigurasi oauth2
-export const oauth2Cient = new google.auth.OAuth2(
+export const oauth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_CLIENT_ID,
   process.env.GOOGLE_CLIENT_SCREET,
   'http://localhost:5000/auth/google/callback'
@@ -14,7 +14,7 @@ const scopes = [
 ]
 
 // Redirect url
-export const authorizationUrl = oauth2Cient.generateAuthUrl({
+export const authorizationUrl = oauth2Client.generateAuthUrl({
   access_type: 'offline',
   scope: scopes,
   include_granted_scopes: true

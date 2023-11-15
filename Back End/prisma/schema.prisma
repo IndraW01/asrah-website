@@ -10,6 +10,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Enum Gender Category
+enum GenderCategory {
+  PRIA
+  WANITA
+  UNISEX
+}
+
 model User {
   id String @db.VarChar(100) @id @default(uuid())
   name String @db.VarChar(200) 
@@ -22,4 +29,67 @@ model User {
   updated_at DateTime @updatedAt  
 
   @@map("users")
+}
+
+model Category {
+  id String @db.VarChar(100) @id @default(uuid())
+  name String @db.VarChar(100)
+  description String @db.Text 
+  // products Product[]
+
+  @@map("categories")
+}
+
+model Size {
+  id String @db.VarChar(100) @id @default(uuid())
+  name String @db.VarChar(100)
+  description String @db.Text 
+
+  @@map("sizes")
+}
+
+model Product {
+  id String @db.VarChar(100) @id @default(uuid())
+  // category Category? @relation(fields: [category_id], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  // category_id String? @db.VarChar(100) 
+  name String @db.VarChar(200)
+  gender_category GenderCategory
+  // stock Int @db.Int
+  price Int @db.Int
+  description String @db.Text
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt  
+  imageProducts ImageProduct[]
+  colors ColorInProduct[]
+
+  @@map("products")
+}
+
+model ImageProduct {
+  id String @db.VarChar(100) @id @default(uuid())
+  product Product @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  product_id String @db.VarChar(100)
+  image String @db.VarChar(200) 
+
+  @@map("image_products")
+}
+
+model Color {
+  id String @db.VarChar(100) @id @default(uuid())
+  name String @db.VarChar(100)
+  hexa String @db.VarChar(20)
+  products ColorInProduct[]
+
+  @@map("colors")
+}
+
+model ColorInProduct {
+  color Color @relation(fields: [color_id], references: [id])
+  color_id String @db.VarChar(100)
+  product_id String @db.VarChar(100)
+  product Product @relation(fields: [product_id], references: [id])
+
+  @@id([color_id, product_id])
+
+  @@map("color_in_products")
 }

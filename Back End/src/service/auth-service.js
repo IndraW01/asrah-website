@@ -3,9 +3,10 @@ import { ResponseError } from "../error/response-error.js";
 import { validation } from "../validation/validation.js";
 import { authLogoutValidation, authLoginValidation, authRegisterValidation } from "../validation/auth-validation.js";
 import { google } from "googleapis";
-import { oauth2Cient, authorizationUrl } from "../config/google.js";
+import { oauth2Client, authorizationUrl } from "../config/google.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import authModel from "../model/auth-model.js";
 
 const register = async (request) => {
   // Validasi request
@@ -43,12 +44,8 @@ const login = async (request) => {
   // Validasi request
   request = validation(authLoginValidation, request);
 
-  // Cek apakah ada user valid
-  const user = await prisma.user.findUnique({
-    where: {
-      email: request.email,
-    }
-  });
+  // Get user
+  const user = await authModel.getUserEmail(request.email);
 
   if (!user) {
     throw new ResponseError(401, 'Incorrect email or password');
@@ -60,32 +57,9 @@ const login = async (request) => {
     throw new ResponseError(401, 'Incorrect email or password');
   }
 
-  // Jika user nya valid buat access token dan refresh token
-  const access_token = jwt.sign({
-    name: user.name,
-    email: user.email,
-    is_admin: user.is_admin
-  }, process.env.JWT_SCREET_KEY, {
-    expiresIn: '20s'
-  })
-
-  const refresh_token = jwt.sign({
-    name: user.name,
-    email: user.email,
-    is_admin: user.is_admin
-  }, process.env.JWT_SCREET_KEY, {
-    expiresIn: '1d'
-  })
-
-  // Update column refresh token
-  await prisma.user.update({
-    where: {
-      email: user.email
-    },
-    data: {
-      refresh_token: refresh_token
-    }
-  })
+  // Buat token dan return tokennya
+  const access_token = authModel.createAccessToken(user);
+  const refresh_token = await authModel.createRefreshToken(user);
 
   return {
     access_token: access_token,
@@ -115,18 +89,23 @@ const refreshToken = async (token) => {
     const decode = jwt.verify(token, process.env.JWT_SCREET_KEY);
 
     // Jika ada refresh tokennya
-    const access_token = jwt.sign({
-      name: decode.name,
-      email: decode.email,
-      is_admin: decode.is_admin
-    }, process.env.JWT_SCREET_KEY, {
-      expiresIn: '20s'
-    })
+    const access_token = authModel.createAccessToken(decode);
 
     return {
       token: access_token
     }
   } catch (e) {
+    // Jika refresh tokennya expired
+    // Update Refresh tokennya menjadi null
+    await prisma.user.update({
+      where: {
+        email: checkToken.email
+      },
+      data: {
+        refresh_token: null
+      }
+    });
+
     throw new ResponseError(401, e.message);
   }
 }
@@ -135,12 +114,7 @@ const logout = async (email, token) => {
   email = validation(authLogoutValidation, email);
 
   // Cek apakah user ada dari email dan token
-  const user = await prisma.user.findUnique({
-    where: {
-      email: email,
-      refresh_token: token
-    }
-  });
+  const user = await authModel.getUserEmail(email, token);
 
   if (!user) {
     throw new ResponseError(404, 'User not found');
@@ -165,14 +139,14 @@ const loginGoogle = () => {
 
 const callback = async (code) => {
   // Ambil tokennya
-  const { tokens } = await oauth2Cient.getToken(code);
+  const { tokens } = await oauth2Client.getToken(code);
 
   // Buat credential
-  oauth2Cient.setCredentials(tokens);
+  oauth2Client.setCredentials(tokens);
 
   // Ambil data usernya
   const oauth2 = google.oauth2({
-    auth: oauth2Cient,
+    auth: oauth2Client,
     version: 'v2'
   });
 
@@ -182,11 +156,8 @@ const callback = async (code) => {
     throw new ResponseError(404, 'User google not valid');
   }
 
-  let user = await prisma.user.findUnique({
-    where: {
-      email: data.email
-    }
-  });
+  // Get user
+  let user = await authModel.getUserEmail(data.email);
 
   // Buat user baru jika tidak ada email nya
   if (!user) {
@@ -198,32 +169,9 @@ const callback = async (code) => {
     })
   }
 
-  // Buat jwt
-  const access_token = jwt.sign({
-    name: user.name,
-    email: user.email,
-    is_admin: user.is_admin
-  }, process.env.JWT_SCREET_KEY, {
-    expiresIn: '20s'
-  })
-
-  const refresh_token = jwt.sign({
-    name: user.name,
-    email: user.email,
-    is_admin: user.is_admin
-  }, process.env.JWT_SCREET_KEY, {
-    expiresIn: '1d'
-  })
-
-  // Update column refresh token
-  await prisma.user.update({
-    where: {
-      email: user.email
-    },
-    data: {
-      refresh_token: refresh_token
-    }
-  })
+  // Buat token dan return tokennya
+  const access_token = authModel.createAccessToken(user);
+  const refresh_token = await authModel.createRefreshToken(user);
 
   return {
     access_token: access_token,

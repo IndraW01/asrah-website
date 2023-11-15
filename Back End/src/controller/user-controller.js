@@ -14,7 +14,24 @@ const current = async (req, res, next) => {
   }
 }
 
+const update = async (req, res, next) => {
+  try {
+    const request = req.body;
+    const file = req.files;
+    const email = req.user.email;
+    const result = await userService.update(request, file, email);
+
+    res.status(200).json({
+      code: 200,
+      data: result
+    });
+  } catch (e) {
+    next(e);
+  }
+}
+
 
 export default {
   current,
+  update,
 }

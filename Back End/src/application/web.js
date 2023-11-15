@@ -1,13 +1,17 @@
 import express from "express";
-import { publicApi } from "../routes/public.js";
-import { errorMiddleware } from "../middleware/error-middleware.js";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
+import fileUpload from "express-fileupload";
+import { publicApi } from "../routes/public.js";
+import { errorMiddleware } from "../middleware/error-middleware.js";
 import { privateApi } from "../routes/private.js";
 
 dotenv.config();
 
 export const web = express();
+
+// Built in middleware trhird party
+web.use(fileUpload());
 
 // Parse request user ke json
 web.use(express.json());
