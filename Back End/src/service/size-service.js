@@ -18,11 +18,37 @@ const create = async (request) => {
 const get = async () => {
   return prisma.size.findMany({
     select: {
+      id: true,
       name: true,
       description: true
     },
     orderBy: {
       name: 'asc'
+    }
+  });
+}
+
+const getById = async (sizeId) => {
+  sizeId = validation(sizeGetValidation, sizeId);
+
+  const sizeExist = await prisma.size.count({
+    where: {
+      id: sizeId
+    }
+  });
+
+  if (sizeExist !== 1) {
+    throw new ResponseError(404, 'Size not found');
+  }
+
+  return prisma.size.findUnique({
+    where: {
+      id: sizeId
+    },
+    select: {
+      id: true,
+      name: true,
+      description: true
     }
   });
 }
@@ -77,7 +103,8 @@ const destroy = async (sizeId) => {
 
 export default {
   create,
-  update,
   get,
+  getById,
+  update,
   destroy
 }

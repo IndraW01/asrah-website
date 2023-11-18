@@ -20,14 +20,18 @@ export const productGetValidation = Joi.object({
   take: Joi.number().positive()
 });
 
+export const productGetByIdValidation = Joi.string().required()
+
 export const productUpdateValidation = Joi.object({
+  id: Joi.string().required(),
   // category_id: Joi.string().max(100).required(),
   name: Joi.string().max(200).required(),
   gender_category: Joi.string().valid('PRIA', 'WANITA', 'UNISEX').required(),
   // stok: Joi.number().min(0).positive().required(),s
   price: Joi.number().min(0).positive().required(),
   description: Joi.string().required(),
-  images: Joi.required(),
+  // Kalau dibutuhkan
+  // images: Joi.optional(),
   colors: Joi.alternatives().try(
     Joi.string(),
     Joi.array().items(Joi.string())

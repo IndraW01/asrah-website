@@ -18,11 +18,38 @@ const create = async (request) => {
 const get = async () => {
   return prisma.category.findMany({
     select: {
+      id: true,
       name: true,
       description: true
     },
     orderBy: {
       name: 'asc'
+    }
+  });
+
+}
+
+const getById = async (categoryId) => {
+  categoryId = validation(categoryGetValidation, categoryId);
+
+  const categoryExist = await prisma.category.count({
+    where: {
+      id: categoryId
+    }
+  });
+
+  if (categoryExist !== 1) {
+    throw new ResponseError(404, 'Category not found');
+  }
+
+  return prisma.category.findUnique({
+    where: {
+      id: categoryId
+    },
+    select: {
+      id: true,
+      name: true,
+      description: true
     }
   });
 }
@@ -74,7 +101,8 @@ const destroy = async (categoryId) => {
 
 export default {
   create,
-  update,
   get,
+  getById,
+  update,
   destroy
 }

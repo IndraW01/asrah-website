@@ -18,11 +18,37 @@ const create = async (request) => {
 const get = async () => {
   return prisma.color.findMany({
     select: {
+      id: true,
       name: true,
       hexa: true
     },
     orderBy: {
       name: 'asc'
+    }
+  });
+}
+
+const getById = async (colorId) => {
+  colorId = validation(colorGetValidation, colorId);
+
+  const colorExist = await prisma.color.count({
+    where: {
+      id: colorId
+    }
+  });
+
+  if (colorExist !== 1) {
+    throw new ResponseError(404, 'Color not found');
+  }
+
+  return prisma.color.findUnique({
+    where: {
+      id: colorId
+    },
+    select: {
+      id: true,
+      name: true,
+      hexa: true
     }
   });
 }
@@ -77,7 +103,8 @@ const destroy = async (colorId) => {
 
 export default {
   create,
-  update,
   get,
+  getById,
+  update,
   destroy
 }

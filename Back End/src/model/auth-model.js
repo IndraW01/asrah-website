@@ -35,6 +35,17 @@ const createRefreshToken = async (user) => {
   return refresh_token;
 }
 
+const createEmailToken = async (name, email) => {
+  const email_token = jwt.sign({
+    name: name,
+    email: email,
+  }, process.env.JWT_SCREET_KEY, {
+    expiresIn: '1d'
+  })
+
+  return email_token;
+}
+
 const getUserEmail = (email, token = null) => {
   let filter = {
     email: email
@@ -52,5 +63,6 @@ const getUserEmail = (email, token = null) => {
 export default {
   createAccessToken,
   createRefreshToken,
+  createEmailToken,
   getUserEmail
 }

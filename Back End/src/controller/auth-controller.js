@@ -7,6 +7,7 @@ const register = async (req, res, next) => {
 
     res.status(200).json({
       code: 200,
+      message: 'Verification link has been sent',
       data: result
     });
   } catch (e) {
@@ -87,11 +88,42 @@ const callback = async (req, res, next) => {
   }
 }
 
+const verifyEmail = async (req, res, next) => {
+  try {
+    const userId = req.params.userId;
+    const token = req.params.token;
+    const result = await authService.verifyEmail(userId, token);
+
+    res.status(200).json({
+      code: 200,
+      data: result
+    })
+  } catch (e) {
+    next(e);
+  }
+}
+
+const resend = async (req, res, next) => {
+  try {
+    const email = req.user.email;
+    const result = await authService.resend(email);
+
+    res.status(200).json({
+      code: 200,
+      data: result
+    })
+  } catch (e) {
+    next(e)
+  }
+}
+
 export default {
   register,
   login,
   refreshToken,
   logout,
   loginGoogle,
-  callback
+  callback,
+  verifyEmail,
+  resend
 }

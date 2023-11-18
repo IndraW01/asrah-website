@@ -1,6 +1,6 @@
 import { prisma } from "../application/database.js";
 import { ResponseError } from "../error/response-error.js";
-import { productCreateValidation, productGetValidation } from "../validation/product-validation.js";
+import { productCreateValidation, productGetByIdValidation, productGetValidation, productUpdateValidation } from "../validation/product-validation.js";
 import { imageValidation, imageValidations } from "../validation/utils/image-validation.js";
 import { validation } from "../validation/validation.js";
 import path from "path";
@@ -136,6 +136,7 @@ const create = async (request) => {
 const get = async (request) => {
   request = validation(productGetValidation, request);
 
+  // Buat filter
   const filter = [];
 
   if (request.gender_category) {
@@ -159,15 +160,58 @@ const get = async (request) => {
     take: request.take
   })
 
+  // Get all product
   const products = await prisma.product.findMany({
     where: {
       AND: filter
     },
     select: {
+      id: true,
       name: true,
       gender_category: true,
       price: true,
-      description: true,
+      imageProducts: {
+        select: {
+          image: true
+        },
+        take: 1
+      }
+    },
+    orderBy: {
+      name: 'asc'
+    },
+    take: request.take
+  });
+
+  products.push({ productTotal: productCount });
+
+  return products;
+}
+
+const getById = async (productId) => {
+  productId = validation(productGetByIdValidation, productId);
+
+  // Cek product nya apakah ada
+  const productExist = await prisma.product.count({
+    where: {
+      id: productId
+    }
+  })
+
+  if (productExist !== 1) {
+    throw new ResponseError(404, 'Product not found');
+  }
+
+  // Get product by id
+  const product = await prisma.product.findUnique({
+    where: {
+      id: productId
+    },
+    select: {
+      id: true,
+      name: true,
+      gender_category: true,
+      price: true,
       imageProducts: {
         select: {
           image: true
@@ -182,26 +226,111 @@ const get = async (request) => {
             }
           }
         }
-      },
-      _count: {
-        select: {
-          imageProducts: true,
-          colors: true
-        }
-      },
-    },
-    orderBy: {
-      name: 'asc'
-    },
-    take: request.take
+      }
+    }
   });
 
-  products.push({ productTotal: productCount });
-
-  return products
+  return product;
 }
+
+const update = async (request) => {
+  request = validation(productUpdateValidation, request);
+
+  // Cek product nya apakah ada
+  const productExist = await prisma.product.count({
+    where: {
+      id: request.id
+    }
+  })
+
+  if (productExist !== 1) {
+    throw new ResponseError(404, 'Product not found');
+  }
+
+  // Ubah menjadi array jika color yang diberikan hanya satu saja
+  if (typeof request.colors === 'string') {
+    request.colors = [request.colors];
+  }
+
+  // Cek apakah color nya ada atau tidak
+  const colorIds = request.colors;
+  const colors = await prisma.color.findMany({
+    where: {
+      id: {
+        in: colorIds
+      }
+    }
+  });
+
+  if (colorIds.length !== colors.length) {
+    throw new ResponseError(404, 'One Color not found');
+  }
+
+  try {
+    // Delete semua colors terlebih dahulu
+    await prisma.product.update({
+      where: {
+        id: request.id
+      },
+      data: {
+        colors: {
+          deleteMany: {},
+        }
+      }
+    })
+
+    // Update data produknya
+    const product = await prisma.product.update({
+      where: {
+        id: request.id
+      },
+      data: {
+        name: request.name,
+        gender_category: request.gender_category,
+        price: request.price,
+        description: request.description,
+        colors: {
+          create: colorIds.map(colorId => ({
+            color: {
+              connect: {
+                id: colorId
+              }
+            }
+          }))
+        }
+      },
+      select: {
+        name: true,
+        gender_category: true,
+        price: true,
+        description: true,
+        imageProducts: {
+          select: {
+            image: true
+          }
+        },
+        colors: {
+          select: {
+            color: {
+              select: {
+                name: true,
+                hexa: true
+              }
+            }
+          }
+        }
+      }
+    });
+
+    return product;
+  } catch (e) {
+    throw e;
+  }
+};
 
 export default {
   create,
-  get
+  get,
+  getById,
+  update
 }

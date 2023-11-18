@@ -27,6 +27,20 @@ const get = async (req, res, next) => {
   }
 }
 
+const getById = async (req, res, next) => {
+  try {
+    const sizeId = req.params.sizeId;
+    const result = await sizeService.getById(sizeId);
+
+    res.status(200).json({
+      code: 200,
+      data: result
+    });
+  } catch (e) {
+    next(e);
+  }
+}
+
 const update = async (req, res, next) => {
   try {
     const request = req.body;
@@ -62,7 +76,8 @@ const destroy = async (req, res, next) => {
 
 export default {
   create,
-  update,
   get,
+  getById,
+  update,
   destroy
 }

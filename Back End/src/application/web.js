@@ -28,5 +28,13 @@ web.use(publicApi);
 // Register route private
 web.use(privateApi);
 
+// Page not found
+web.use((req, res, next) => {
+  res.status(404).json({
+    code: 404,
+    message: 'Not found'
+  });
+})
+
 // Register error middleware
 web.use(errorMiddleware);
