@@ -5,6 +5,7 @@ import authController from "../controller/auth-controller.js";
 import sizeController from "../controller/size-controller.js";
 import colorController from "../controller/color-controller.js";
 import productController from "../controller/product-controller.js";
+import addressController from "../controller/address-controller.js";
 import { authMiddleware } from "../middleware/auth-middleware.js";
 import { roleMiddleware } from "../middleware/role-middleware.js";
 
@@ -46,3 +47,8 @@ privateApi.post('/api/products', roleMiddleware(true), productController.create)
 privateApi.get('/api/products', productController.get);
 privateApi.get('/api/products/:productId', productController.getById);
 privateApi.patch('/api/products/:productId', roleMiddleware(true), productController.update);
+
+
+privateApi.post('/api/addresses', addressController.create);
+privateApi.get('/api/addresses', addressController.get);
+privateApi.patch('/api/addresses/:addressId', addressController.update);

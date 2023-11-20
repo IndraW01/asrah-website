@@ -266,19 +266,43 @@ const resend = async (email) => {
   // create email token
   const token = await authModel.createEmailToken(user.name, user.email);
 
-  // update tokennya
-  await prisma.user.update({
+  // cek apakah user memiliki token
+  const userCheckToken = await prisma.token.findUnique({
     where: {
-      email: email
-    },
-    data: {
-      token: {
-        update: {
-          token: token
-        }
-      }
+      user_id: user.id
     }
   })
+
+  // Jika belum ada tokennya
+  if (!userCheckToken) {
+    await prisma.user.update({
+      where: {
+        id: user.id
+      },
+      data: {
+        token: {
+          create: {
+            token: token
+          }
+        }
+      }
+    })
+  } else {
+    // update tokennya
+    await prisma.user.update({
+      where: {
+        email: email
+      },
+      data: {
+        token: {
+          update: {
+            token: token
+          }
+        }
+      }
+    })
+  }
+
 
   // kirim email verifikasi
   sendEmailVerification({

@@ -29,8 +29,22 @@ model User {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   token Token?  
+  addresses Address[]
 
   @@map("users")
+}
+
+model Address {
+  id String @db.VarChar(100) @id @default(uuid())
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user_id String @db.VarChar(100)
+  address_name String @db.VarChar(200)
+  province String @db.VarChar(200)
+  city String @db.VarChar(200)
+  subdistrict String @db.VarChar(200)
+  road String @db.VarChar(200)
+
+  @@map("addresses")
 }
 
 model Token {
