@@ -19,7 +19,10 @@ const update = async (req, res, next) => {
     const request = req.body;
     const file = req.files;
     const email = req.user.email;
-    const result = await userService.update(request, file, email);
+
+    request.email = email;
+
+    const result = await userService.update(request, file);
 
     res.status(200).json({
       code: 200,

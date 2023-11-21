@@ -28,14 +28,13 @@ const current = async (email) => {
   return user;
 }
 
-const update = async (request, file, email) => {
-  email = validation(userGetValidation, email)
+const update = async (request, file) => {
   request = validation(userUpateValidation, request);
 
   // Cek apakah ada user
   const user = await prisma.user.findUnique({
     where: {
-      email: email
+      email: request.email
     }
   })
 
@@ -53,26 +52,33 @@ const update = async (request, file, email) => {
     validation(imageValidation, imageObjectValidation);
   }
 
+  // Direktori image
+  const pathIamge = process.cwd() + '/public/user/';
+  let imageName;
+
   try {
     // Upload image
     if (file) {
-      // Direktori image
-      const pathIamge = process.cwd() + '/public/user/';
-      const imageName = `${Date.now()}-${file.image.name}`;
+      // Nama image terbaru
+      imageName = `${Date.now()}-${file.image.name}`;
 
       // Hapus image sebelumnya
       if (user.image) {
-        console.log(pathIamge);
-        fs.rm(pathIamge + user.image);
+        // Jika ada kesalahan pindahkah dulu filenya
+        await fs.copyFile(pathIamge + user.image, pathIamge + 'delete/' + user.image);
+        await fs.rm(pathIamge + user.image);
       }
 
       // Tambahkan data image ke request untuk diupdate
       request.image = imageName;
 
       // Upload image ke folder public
-      file.image.mv(pathIamge + imageName)
+      await file.image.mv(pathIamge + imageName)
     }
 
+    delete request.email;
+
+    // Update usernya tanpa update emailnya
     return prisma.user.update({
       where: {
         email: user.email
@@ -85,7 +91,18 @@ const update = async (request, file, email) => {
       }
     })
   } catch (e) {
+    if (file) {
+      if (user.image) {
+        await fs.rename(pathIamge + 'delete/' + user.image, pathIamge + user.image);
+      }
+
+      await fs.rm(pathIamge + imageName);
+    }
+
     throw e;
+  } finally {
+    await fs.rm(pathIamge + 'delete', { recursive: true, force: true });
+    await fs.mkdir(pathIamge + 'delete');
   }
 
 }
