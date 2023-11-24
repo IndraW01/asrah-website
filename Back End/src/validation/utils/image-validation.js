@@ -11,3 +11,9 @@ export const imageValidations = Joi.array().items(Joi.object({
   mimeType: Joi.string().valid('image/jpeg', 'image/png', 'image/jpg').required(),
   size: Joi.number().max(3000000).required()
 }));
+
+export const fileProfOfPaymentValidation = Joi.object({
+  extension: Joi.string().valid('.png', '.jpeg', '.jpg', '.pdf').required(),
+  mimeType: Joi.string().valid('image/jpeg', 'image/png', 'image/jpg', 'application/pdf').required(),
+  size: Joi.number().max(3000000).required()
+});

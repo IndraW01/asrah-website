@@ -6,8 +6,11 @@ import sizeController from "../controller/size-controller.js";
 import colorController from "../controller/color-controller.js";
 import productController from "../controller/product-controller.js";
 import addressController from "../controller/address-controller.js";
+import cartController from "../controller/cart-controller.js";
 import { authMiddleware } from "../middleware/auth-middleware.js";
 import { roleMiddleware } from "../middleware/role-middleware.js";
+import { verifyMiddleware } from "../middleware/verify-middleware.js";
+import orderController from "../controller/order-controller.js";
 
 export const privateApi = express.Router();
 
@@ -48,7 +51,21 @@ privateApi.get('/api/products', productController.get);
 privateApi.get('/api/products/:productId', productController.getById);
 privateApi.patch('/api/products/:productId', roleMiddleware(true), productController.update);
 
+// Route Addresses
+privateApi.post('/api/addresses', verifyMiddleware, addressController.create);
+privateApi.get('/api/addresses', verifyMiddleware, addressController.get);
+privateApi.get('/api/addresses/:addressId', verifyMiddleware, addressController.getById);
+privateApi.patch('/api/addresses/:addressId', verifyMiddleware, addressController.update);
 
-privateApi.post('/api/addresses', addressController.create);
-privateApi.get('/api/addresses', addressController.get);
-privateApi.patch('/api/addresses/:addressId', addressController.update);
+// Route Carts
+privateApi.post('/api/carts', verifyMiddleware, cartController.create);
+privateApi.get('/api/carts', verifyMiddleware, cartController.get);
+privateApi.put('/api/carts/increment/:cartId', verifyMiddleware, cartController.incrementQuantity);
+privateApi.put('/api/carts/decrement/:cartId', verifyMiddleware, cartController.decrementQuantity);
+privateApi.delete('/api/carts/:cartId', verifyMiddleware, cartController.destroy);
+
+// Route Orders
+privateApi.post('/api/orders', verifyMiddleware, orderController.create);
+privateApi.get('/api/orders', verifyMiddleware, orderController.get);
+privateApi.get('/api/orders/:orderId', verifyMiddleware, orderController.getById);
+privateApi.patch('/api/orders/prof-of-payment/:orderId', verifyMiddleware, orderController.updateProfOfPayment);

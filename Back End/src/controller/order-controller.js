@@ -1,15 +1,15 @@
-import addressService from "../service/address-service.js";
+import orderService from "../service/order-service.js";
 
 const create = async (req, res, next) => {
   try {
     const email = req.user.email;
     const request = req.body;
-    const result = await addressService.create(request, email);
+    const result = await orderService.create(request, email);
 
     res.status(200).json({
       code: 200,
-      data: result
-    })
+      data: result,
+    });
   } catch (e) {
     next(e);
   }
@@ -18,46 +18,43 @@ const create = async (req, res, next) => {
 const get = async (req, res, next) => {
   try {
     const email = req.user.email;
-    const result = await addressService.get(email);
+    const result = await orderService.get(email);
 
     res.status(200).json({
       code: 200,
-      data: result
-    })
+      data: result,
+    });
   } catch (e) {
-    next(e);
+    next(e)
   }
 }
 
 const getById = async (req, res, next) => {
   try {
     const email = req.user.email;
-    const addressId = req.params.addressId;
-    const result = await addressService.getById(addressId, email);
+    const orderId = req.params.orderId;
+    const result = await orderService.getById(email, orderId);
 
     res.status(200).json({
       code: 200,
-      data: result
-    })
+      data: result,
+    });
   } catch (e) {
-    next(e);
+    next(e)
   }
 }
 
-const update = async (req, res, next) => {
+const updateProfOfPayment = async (req, res, next) => {
   try {
     const email = req.user.email;
-    const request = req.body;
-    const addressId = req.params.addressId;
-
-    request.id = addressId;
-
-    const result = await addressService.update(request, email);
+    const orderId = req.params.orderId;
+    const file = req.files;
+    const result = await orderService.updateProfOfPayment(email, orderId, file);
 
     res.status(200).json({
       code: 200,
-      data: result
-    })
+      data: result,
+    });
   } catch (e) {
     next(e);
   }
@@ -66,6 +63,7 @@ const update = async (req, res, next) => {
 export default {
   create,
   get,
-  update,
-  getById
+  getById,
+  updateProfOfPayment
 }
+

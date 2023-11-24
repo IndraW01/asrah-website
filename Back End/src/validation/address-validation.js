@@ -8,6 +8,8 @@ export const addressCreateValidation = Joi.object({
   road: Joi.string().max(200).required(),
 });
 
+export const addressGetValidation = Joi.string().max(100).required();
+
 export const addressUpdateValidation = Joi.object({
   id: Joi.string().required(),
   address_name: Joi.string().max(200).required(),

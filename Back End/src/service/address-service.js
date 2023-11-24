@@ -1,6 +1,6 @@
 import { prisma } from "../application/database.js";
 import { ResponseError } from "../error/response-error.js";
-import { addressCreateValidation, addressUpdateValidation } from "../validation/address-validation.js";
+import { addressCreateValidation, addressGetValidation, addressUpdateValidation } from "../validation/address-validation.js";
 import { validation } from "../validation/validation.js"
 
 const create = async (request, email) => {
@@ -61,6 +61,35 @@ const get = async (email) => {
   });
 }
 
+const getById = async (addressId, email) => {
+  addressId = validation(addressGetValidation, addressId);
+
+  // Cek apakah usernya ada
+  const user = await prisma.user.findUnique({
+    where: {
+      email: email
+    }
+  })
+
+  if (!user) {
+    throw new ResponseError(404, 'User not found');
+  }
+
+  // Cek apakah address nya ada
+  const address = await prisma.address.findUnique({
+    where: {
+      id: addressId,
+      user_id: user.id
+    }
+  })
+
+  if (!address) {
+    throw new ResponseError(404, 'Address not found');
+  }
+
+  return address;
+}
+
 const update = async (request, email) => {
   request = validation(addressUpdateValidation, request);
 
@@ -100,5 +129,6 @@ const update = async (request, email) => {
 export default {
   create,
   get,
-  update
+  update,
+  getById
 }

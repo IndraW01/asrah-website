@@ -221,6 +221,7 @@ const getById = async (productId) => {
         select: {
           color: {
             select: {
+              id: true,
               name: true,
               hexa: true
             }

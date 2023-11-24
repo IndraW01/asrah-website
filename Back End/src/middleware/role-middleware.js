@@ -7,7 +7,7 @@ export const roleMiddleware = (isAdmin) => {
     } else {
       res.status(403).json({
         code: 403,
-        message: 'Forbidden'
+        errors: 'Forbidden'
       });
     }
 
